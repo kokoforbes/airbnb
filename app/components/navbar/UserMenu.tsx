@@ -7,7 +7,7 @@ import MenuItem from "./MenuItem";
 import useOutsideClick from "../../hooks/useOutsideClick";
 
 const UserMenu = () => {
-  const ref = useRef();
+  const ref = useRef<HTMLHeadingElement>(null);
 
   const [isOpen, setIsOpen] = useState(false);
 
