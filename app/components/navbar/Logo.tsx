@@ -9,8 +9,9 @@ const Logo = () => {
     <Image
       className='hidden md:block cursor-pointer'
       alt='logo'
-      height='100'
-      width='100'
+      height={100}
+      width={100}
+      priority
       src='/images/logo.png'
     />
   );
