@@ -5,8 +5,11 @@ import Avatar from "../Avatar";
 import { useCallback, useState, useRef } from "react";
 import MenuItem from "./MenuItem";
 import useOutsideClick from "../../hooks/useOutsideClick";
+import useRegisterModal from "@/app/hooks/useRegisterModal";
 
 const UserMenu = () => {
+  const registerModal = useRegisterModal();
+
   const ref = useRef<HTMLHeadingElement>(null);
 
   const [isOpen, setIsOpen] = useState(false);
@@ -59,7 +62,7 @@ const UserMenu = () => {
         >
           <div className='flex flex-col cursor-pointer'>
             <>
-              <MenuItem onClick={() => {}} label='Sign up' />
+              <MenuItem onClick={registerModal.onOpen} label='Sign up' />
               <MenuItem onClick={() => {}} label='Log in' />
               <hr className='h-px bg-gray-200 border-0'></hr>
               <MenuItem onClick={() => {}} label='Airbnb your home' />
