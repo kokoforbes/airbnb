@@ -6,9 +6,17 @@ import { useCallback, useState, useRef } from "react";
 import MenuItem from "./MenuItem";
 import useOutsideClick from "../../hooks/useOutsideClick";
 import useRegisterModal from "@/app/hooks/useRegisterModal";
+import useLoginModal from "@/app/hooks/useLoginModal";
+import { User } from "@prisma/client";
+import { signOut } from "next-auth/react";
 
-const UserMenu = () => {
+interface UserMenuProps {
+  currentUser?: User | null;
+}
+
+const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
   const registerModal = useRegisterModal();
+  const loginModal = useLoginModal();
 
   const ref = useRef<HTMLHeadingElement>(null);
 
@@ -62,11 +70,29 @@ const UserMenu = () => {
         >
           <div className='flex flex-col cursor-pointer'>
             <>
-              <MenuItem onClick={registerModal.onOpen} label='Sign up' />
-              <MenuItem onClick={() => {}} label='Log in' />
-              <hr className='h-px bg-gray-200 border-0'></hr>
-              <MenuItem onClick={() => {}} label='Airbnb your home' />
-              <MenuItem onClick={() => {}} label='Help' />
+              {currentUser ? (
+                <>
+                  <MenuItem onClick={() => {}} label='Messages' />
+                  <MenuItem onClick={() => {}} label='Notifications' />
+                  <MenuItem onClick={() => {}} label='Trips' />
+                  <MenuItem onClick={() => {}} label='Wishlists' />
+                  <hr className='h-px bg-gray-200 border-0'></hr>
+                  <MenuItem onClick={() => {}} label='Airbnb your home' />
+                  <MenuItem onClick={() => {}} label='Account' />
+
+                  <hr className='h-px bg-gray-200 border-0'></hr>
+                  <MenuItem onClick={() => {}} label='Help' />
+                  <MenuItem onClick={() => signOut()} label='Log out' />
+                </>
+              ) : (
+                <>
+                  <MenuItem onClick={registerModal.onOpen} label='Sign up' />
+                  <MenuItem onClick={loginModal.onOpen} label='Log in' />
+                  <hr className='h-px bg-gray-200 border-0'></hr>
+                  <MenuItem onClick={() => {}} label='Airbnb your home' />
+                  <MenuItem onClick={() => {}} label='Help' />
+                </>
+              )}
             </>
           </div>
         </div>
