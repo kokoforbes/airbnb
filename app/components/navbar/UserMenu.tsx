@@ -7,6 +7,8 @@ import MenuItem from "./MenuItem";
 import useOutsideClick from "../../hooks/useOutsideClick";
 import useRegisterModal from "@/app/hooks/useRegisterModal";
 import useLoginModal from "@/app/hooks/useLoginModal";
+import useRentModal from "@/app/hooks/useRentModal";
+
 import { signOut } from "next-auth/react";
 import { SafeUser } from "@/app/types";
 
@@ -17,6 +19,7 @@ interface UserMenuProps {
 const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
   const registerModal = useRegisterModal();
   const loginModal = useLoginModal();
+  const rentModal = useRentModal();
 
   const ref = useRef<HTMLHeadingElement>(null);
 
@@ -28,10 +31,22 @@ const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
 
   useOutsideClick(ref, () => setIsOpen(false));
 
+  const onRent = useCallback(() => {
+    if (!currentUser) {
+      return loginModal.onOpen();
+    }
+
+    //open rent modal
+    rentModal.onOpen();
+  }, [currentUser, loginModal, rentModal]);
+
   return (
     <div className='relative'>
       <div className='flex flex-row items-center gap-3'>
-        <div className='hidden md:block text-sm font-semibold py-3 px-4 rounded-full hover:bg-neutral-100 transition cursor-pointer'>
+        <div
+          onClick={onRent}
+          className='hidden md:block text-sm font-semibold py-3 px-4 rounded-full hover:bg-neutral-100 transition cursor-pointer'
+        >
           Airbnb your home
         </div>
 
@@ -77,7 +92,10 @@ const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
                   <MenuItem onClick={() => {}} label='Trips' />
                   <MenuItem onClick={() => {}} label='Wishlists' />
                   <hr className='h-px bg-gray-200 border-0'></hr>
-                  <MenuItem onClick={() => {}} label='Airbnb your home' />
+                  <MenuItem
+                    onClick={rentModal.onOpen}
+                    label='Airbnb your home'
+                  />
                   <MenuItem onClick={() => {}} label='Account' />
 
                   <hr className='h-px bg-gray-200 border-0'></hr>
@@ -89,7 +107,7 @@ const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
                   <MenuItem onClick={registerModal.onOpen} label='Sign up' />
                   <MenuItem onClick={loginModal.onOpen} label='Log in' />
                   <hr className='h-px bg-gray-200 border-0'></hr>
-                  <MenuItem onClick={() => {}} label='Airbnb your home' />
+                  <MenuItem onClick={onRent} label='Airbnb your home' />
                   <MenuItem onClick={() => {}} label='Help' />
                 </>
               )}
