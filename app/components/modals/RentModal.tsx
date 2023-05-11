@@ -1,5 +1,10 @@
 "use client";
 
+import axios from "axios";
+import { toast } from "react-hot-toast";
+
+import { useRouter } from "next/navigation";
+
 import useRentModal from "@/app/hooks/useRentModal";
 import { useMemo, useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
@@ -12,6 +17,8 @@ import CategoryInput from "../inputs/CategoryInput";
 import Input from "../inputs/Input";
 import Modal from "./Modal";
 import Heading from "../Heading";
+import Counter from "../inputs/Counter";
+import ImageUpload from "../inputs/ImageUpload";
 
 enum STEPS {
   CATEGORY = 0,
@@ -24,8 +31,10 @@ enum STEPS {
 
 const RentModal = () => {
   const rentModal = useRentModal();
+  const router = useRouter();
 
   const [step, setStep] = useState(STEPS.CATEGORY);
+  const [isLoading, setIsLoading] = useState(false);
 
   const {
     register,
@@ -77,6 +86,30 @@ const RentModal = () => {
 
   const onNext = () => {
     setStep((value) => value + 1);
+  };
+
+  const onSubmit: SubmitHandler<FieldValues> = (data) => {
+    if (step !== STEPS.PRICE) {
+      return onNext();
+    }
+
+    setIsLoading(true);
+
+    axios
+      .post("/api/listings", data)
+      .then(() => {
+        toast.success("Listing created!");
+        router.refresh();
+        reset();
+        setStep(STEPS.CATEGORY);
+        rentModal.onClose();
+      })
+      .catch(() => {
+        toast.error("Something went wrong.");
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
   const actionLabel = useMemo(() => {
@@ -148,26 +181,26 @@ const RentModal = () => {
           title='Share some basics about your place'
           subtitle='What amenitis do you have?'
         />
-        {/* <Counter 
-          onChange={(value) => setCustomValue('guestCount', value)}
+        <Counter
+          onChange={(value) => setCustomValue("guestCount", value)}
           value={guestCount}
-          title="Guests" 
-          subtitle="How many guests do you allow?"
+          title='Guests'
+          subtitle='How many guests do you allow?'
         />
         <hr />
-        <Counter 
-          onChange={(value) => setCustomValue('roomCount', value)}
+        <Counter
+          onChange={(value) => setCustomValue("roomCount", value)}
           value={roomCount}
-          title="Rooms" 
-          subtitle="How many rooms do you have?"
+          title='Rooms'
+          subtitle='How many rooms do you have?'
         />
         <hr />
-        <Counter 
-          onChange={(value) => setCustomValue('bathroomCount', value)}
+        <Counter
+          onChange={(value) => setCustomValue("bathroomCount", value)}
           value={bathroomCount}
-          title="Bathrooms" 
-          subtitle="How many bathrooms do you have?"
-        /> */}
+          title='Bathrooms'
+          subtitle='How many bathrooms do you have?'
+        />
       </div>
     );
   }
@@ -179,10 +212,10 @@ const RentModal = () => {
           title='Add a photo of your place'
           subtitle='Show guests what your place looks like!'
         />
-        {/* <ImageUpload
-          onChange={(value) => setCustomValue('imageSrc', value)}
+        <ImageUpload
+          onChange={(value) => setCustomValue("imageSrc", value)}
           value={imageSrc}
-        /> */}
+        />
       </div>
     );
   }
@@ -194,9 +227,9 @@ const RentModal = () => {
           title='How would you describe your place?'
           subtitle='Short and sweet works best!'
         />
-        {/* <Input
-          id="title"
-          label="Title"
+        <Input
+          id='title'
+          label='Title'
           disabled={isLoading}
           register={register}
           errors={errors}
@@ -204,13 +237,13 @@ const RentModal = () => {
         />
         <hr />
         <Input
-          id="description"
-          label="Description"
+          id='description'
+          label='Description'
           disabled={isLoading}
           register={register}
           errors={errors}
           required
-        /> */}
+        />
       </div>
     );
   }
@@ -222,16 +255,16 @@ const RentModal = () => {
           title='Now, set your price'
           subtitle='How much do you charge per night?'
         />
-        {/* <Input
-          id="price"
-          label="Price"
-          formatPrice 
-          type="number" 
+        <Input
+          id='price'
+          label='Price'
+          formatPrice
+          type='number'
           disabled={isLoading}
           register={register}
           errors={errors}
           required
-        /> */}
+        />
       </div>
     );
   }
@@ -240,7 +273,7 @@ const RentModal = () => {
     <Modal
       isOpen={rentModal.isOpen}
       onClose={rentModal.onClose}
-      onSubmit={onNext}
+      onSubmit={handleSubmit(onSubmit)}
       actionLabel={actionLabel}
       secondaryActionLabel={secondaryActionLabel}
       secondaryAction={step === STEPS.CATEGORY ? undefined : onBack}
