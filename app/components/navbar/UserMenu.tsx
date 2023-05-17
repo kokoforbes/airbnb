@@ -1,4 +1,5 @@
 "use client";
+import { useRouter } from "next/navigation";
 import { AiOutlineMenu } from "react-icons/ai";
 import { BiGlobe } from "react-icons/bi";
 import Avatar from "../Avatar";
@@ -17,6 +18,7 @@ interface UserMenuProps {
 }
 
 const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
+  const router = useRouter();
   const registerModal = useRegisterModal();
   const loginModal = useLoginModal();
   const rentModal = useRentModal();
@@ -89,7 +91,14 @@ const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
                 <>
                   <MenuItem onClick={() => {}} label='Messages' />
                   <MenuItem onClick={() => {}} label='Notifications' />
-                  <MenuItem onClick={() => {}} label='Trips' />
+                  <MenuItem
+                    onClick={() => router.push("/trips")}
+                    label='Trips'
+                  />
+                  <MenuItem
+                    onClick={() => router.push("/reservations")}
+                    label='Reservations'
+                  />
                   <MenuItem onClick={() => {}} label='Wishlists' />
                   <hr className='h-px bg-gray-200 border-0'></hr>
                   <MenuItem
